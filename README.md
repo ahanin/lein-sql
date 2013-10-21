@@ -21,7 +21,10 @@ Usage
 
 To execute a query:
 
-`lein sql execute :jdbc-driver org.postgresql.Driver :jdbc-url jdbc:postgresql://localhost/ :query "CREATE DATABASE my_db"` :username postgres :password postgres
+    $ lein sql execute :jdbc-driver org.postgresql.Driver \
+        :jdbc-url jdbc:postgresql://localhost/ \
+        :username postgres :password postgres \
+        :query "CREATE DATABASE my_db"`
 
 License
 -------
