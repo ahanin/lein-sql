@@ -1,6 +1,6 @@
 (ns lein-sql.cmdarg)
 
-(def arg-name-expr #"^--?([a-zA-Z0-9-]+)$")
+(def arg-name-expr #"^:([a-zA-Z0-9-]+)$")
 
 (defn arg-name
   [s]
