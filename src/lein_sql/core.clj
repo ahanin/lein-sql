@@ -25,7 +25,9 @@
            (:query args))
     (do
       (Class/forName (:jdbc-driver args))
-      (with-open [c (java.sql.DriverManager/getConnection (:jdbc-url args))]
+      (with-open [c (java.sql.DriverManager/getConnection (:jdbc-url args)
+                                                          (:username args)
+                                                          (:password args))]
         (with-open [s (.createStatement c)]
           (.execute s (:query args))
           )))))
