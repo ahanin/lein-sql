@@ -3,4 +3,4 @@ lein: lein2
 script: lein midje
 
 services:
-  - postgres
+  - postgresql
