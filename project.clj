@@ -3,7 +3,8 @@
   :url "http://github.com/ahanin/lein-sql"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies []
+  :dependencies [[leinjacker "0.4.2"]
+                 [org.clojure/java.jdbc "0.3.0-alpha5"]]
   :profiles {:dev {:plugins [[lein-midje "3.1.1"]]
                    :dependencies [[midje "1.5.1"]]}}
   :eval-in-leiningen true)
