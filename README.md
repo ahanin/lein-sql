@@ -3,6 +3,9 @@ lein-sql
 
 Leiningen plugin for executing SQL tasks.
 
+![Travis CI Build Status](https://api.travis-ci.org/ahanin/lein-sql.png "Build Status")
+
+
 Installation
 ------------
 
