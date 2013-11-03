@@ -1,7 +1,8 @@
 (ns lein-sql.core
   (:import [java.sql DriverManager])
   (:require [clojure.java.jdbc :as jdbc])
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string])
+  (:use [clojure.java.io :only [as-file]]))
 
 (defmacro lein-sql-command [command & control-map]
   `(~(symbol (str "lein-sql.core/" command)) ~@control-map))
@@ -42,13 +43,22 @@
           )))
     "$"))
 
-(defn path-pattern [path-pattern]
-  (re-pattern (path-pattern-string path-pattern)))
+(defn make-path-pattern [s]
+  (re-pattern (path-pattern-string s)))
 
-(defn execute-files [file-pattern]
-  (let [path-regexp (file-pattern)]
-    (doseq [f (file-seq file-pattern)]
-      (println f))))
+(defn make-path-matcher [path-pattern]
+  (let [regexp (make-path-pattern path-pattern)]
+    (partial re-matches regexp)))
+
+(defn execute-files [directory includes excludes]
+  (let [including (if includes (make-path-matcher includes) (fn [s] (boolean true)))
+        excluding (if excludes (make-path-matcher excludes) (fn [s] (boolean false)))]
+    (doseq [f (file-seq (as-file directory))
+            :let [path (.getPath f)]
+            :when (and (.isFile f) (including path) (not (excluding path)))] [path]
+      (println path)))
+  ; TODO finish execution of files
+  (println "File execution is still in progress... stay tuned."))
 
 (defmacro with-connection [db-spec & body]
   `(with-open [conn# (get-connection ~db-spec)]
@@ -66,15 +76,18 @@
   :password         Password
 
   :query            SQL query to execute
-  :files            Files from which to sequentially read and execute SQL statements
+
+  :directory        Directory to scan for files containing SQL statements
+  :includes         Including pattern
+  :excludes         Excluding pattern
 
   1. Using JDBC url
-  lein sql :query \"CREATE DATABASE my_db\" :connection-uri jdbc:postgresql://localhost/ :driver org.postgresql.Driver
+      lein sql :query \"CREATE DATABASE my_db\" :connection-uri jdbc:postgresql://localhost/ :driver org.postgresql.Driver
   "
   [project args]
-  (let [{:keys [query files]} args]
+  (let [{:keys [query directory includes excludes]} args]
     (cond query (with-connection args (execute-query query))
-          files (with-connection args (execute-files files))
-          :else (throw (IllegalArgumentException. (format "%s missing a required argument"))
+          directory (with-connection args (execute-files directory includes excludes))
+          :else (throw (IllegalArgumentException. (format "%s missing a required argument" args))
                        ))))
 

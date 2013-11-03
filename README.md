@@ -24,8 +24,8 @@ Usage
 
 To execute a query:
 
-    $ lein sql execute :jdbc-driver org.postgresql.Driver \
-        :jdbc-url jdbc:postgresql://localhost/ \
+    $ lein sql execute :driver org.postgresql.Driver \
+        :connection-uri jdbc:postgresql://localhost/ \
         :username postgres :password postgres \
         :query "CREATE DATABASE my_db"`
 

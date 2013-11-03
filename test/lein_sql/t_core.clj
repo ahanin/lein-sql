@@ -7,8 +7,8 @@
     )
 
 (fact "path-pattern build a regexp that matches path string"
-  (re-matches (core/path-pattern "**/*.sql") "a/b/c/file.sql") => "a/b/c/file.sql"
-  (re-matches (core/path-pattern "a/**/*.sql") "a/b/c/file.sql") => "a/b/c/file.sql"
-  (re-matches (core/path-pattern "**/*.sql") "file.sql") => "file.sql"
-  (re-matches (core/path-pattern "**/b/*.sql") "a/b/c/file.sql") => "a/b/c/file.sql"
+  (re-matches (core/make-path-pattern "**/*.sql") "a/b/c/file.sql") => "a/b/c/file.sql"
+  (re-matches (core/make-path-pattern "a/**/*.sql") "a/b/c/file.sql") => "a/b/c/file.sql"
+  (re-matches (core/make-path-pattern "**/*.sql") "file.sql") => "file.sql"
+  (re-matches (core/make-path-pattern "**/b/*.sql") "a/b/c/file.sql") => "a/b/c/file.sql"
     )
