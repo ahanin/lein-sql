@@ -2,7 +2,8 @@
   (:import [java.sql DriverManager])
   (:require [clojure.java.jdbc :as jdbc])
   (:require [clojure.string :as string])
-  (:use [clojure.java.io :only [as-file]]))
+  (:require [lein-sql.parser :as parser])
+  (:use [clojure.java.io :only [as-file reader]]))
 
 (defmacro lein-sql-command [command & control-map]
   `(~(symbol (str "lein-sql.core/" command)) ~@control-map))
@@ -51,14 +52,16 @@
     (partial re-matches regexp)))
 
 (defn execute-files [directory includes excludes]
-  (let [including (if includes (make-path-matcher includes) (fn [s] (boolean true)))
-        excluding (if excludes (make-path-matcher excludes) (fn [s] (boolean false)))]
+  (let [including (if includes (make-path-matcher includes) #(fn [s] (boolean true)))
+        excluding (if excludes (make-path-matcher excludes) #(fn [s] (boolean false)))]
     (doseq [f (file-seq (as-file directory))
             :let [path (.getPath f)]
             :when (and (.isFile f) (including path) (not (excluding path)))] [path]
-      (println path)))
-  ; TODO finish execution of files
-  (println "File execution is still in progress... stay tuned."))
+      (println path)
+      (with-open [r (reader path)]
+        (doseq [query (parser/sql-seq r)]
+          (execute-query query)
+          )))))
 
 (defmacro with-connection [db-spec & body]
   `(with-open [conn# (get-connection ~db-spec)]
