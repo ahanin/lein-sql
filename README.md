@@ -29,6 +29,15 @@ To execute a query:
         :username postgres :password postgres \
         :query "CREATE DATABASE my_db"`
 
+To run set of `.sql` files:
+
+    $ lein sql execute :driver org.postgresql.Driver \
+        :connection-uri jdbc:postgresql://localhost/ \
+        :username postgres :password postgres \
+        :directory foo/bar
+        :includes **/*.sql
+        :excludes **/templates/**/*.sql
+
 License
 -------
 
