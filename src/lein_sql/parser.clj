@@ -17,5 +17,5 @@
       (map #(->> % (apply str) trim)
         (filter #(not (= delimiter %))
           (partition-by #(not (= *delimiter* %)) (char-seq r))))))
-  (cond (instance? String input) (sql-seq-int (java.io.BufferedReader. (java.io.StringReader. input)))
-        ))
+  (let [reader (if (instance? String input) (java.io.BufferedReader. (java.io.StringReader. input)) input)]
+    (sql-seq-int reader)))

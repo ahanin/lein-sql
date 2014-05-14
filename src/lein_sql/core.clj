@@ -52,13 +52,13 @@
     (partial re-matches regexp)))
 
 (defn execute-files [directory includes excludes]
-  (let [including (if includes (make-path-matcher includes) #(fn [s] (boolean true)))
-        excluding (if excludes (make-path-matcher excludes) #(fn [s] (boolean false)))]
+  (let [included? (if includes (make-path-matcher includes) (fn [s] (boolean true)))
+        excluded? (if excludes (make-path-matcher excludes) (fn [s] (boolean false)))]
     (doseq [f (file-seq (as-file directory))
             :let [path (.getPath f)]
-            :when (and (.isFile f) (including path) (not (excluding path)))] [path]
-      (println path)
+            :when (and (.isFile f) (included? path) (not (excluded? path)))] [path]
       (with-open [r (reader path)]
+        (println (str "Executing " path))
         (doseq [query (parser/sql-seq r)]
           (execute-query query)
           )))))

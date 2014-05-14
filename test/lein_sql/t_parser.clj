@@ -8,5 +8,9 @@
              ;
              SELECT * FROM animals
              ") => ["SELECT * FROM fruits" "SELECT * FROM animals"]
+  (p/sql-seq "
+             -- DROP DATABASE IF EXISTS testdb;
+             CREATE DATABASE testdb
+             ") => ["-- DROP DATABASE IF EXISTS testdb" "CREATE DATABASE testdb"]
     )
 
